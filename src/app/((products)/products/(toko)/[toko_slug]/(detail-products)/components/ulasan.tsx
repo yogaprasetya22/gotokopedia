@@ -129,14 +129,16 @@ export default function Ulasan({ product }: UlasanProps) {
                                             id={`rating-${5 - i}`}
                                             disabled={
                                                 product.ulasan.rating_breakdown[
-                                                    i + 1
-                                                ] === undefined
+                                                    5 - i
+                                                ] === 0
                                                     ? true
                                                     : false
                                             }
                                             checked={reting === 5 - i}
                                             onCheckedChange={() => {
-                                                setRating(5 - i);
+                                                setRating((prev) =>
+                                                    prev === 5 - i ? 0 : 5 - i
+                                                );
                                                 setPage(1);
                                                 setLoadComments(true);
                                             }}
@@ -146,8 +148,8 @@ export default function Ulasan({ product }: UlasanProps) {
                                             className={cn(
                                                 "text-sm text-gray-500 font-medium",
                                                 product.ulasan.rating_breakdown[
-                                                    i + 1
-                                                ] === undefined
+                                                    5 - i
+                                                ] === 0
                                                     ? "text-gray-400"
                                                     : ""
                                             )}
@@ -161,8 +163,8 @@ export default function Ulasan({ product }: UlasanProps) {
                                                     fill={
                                                         product.ulasan
                                                             .rating_breakdown[
-                                                            i + 1
-                                                        ] !== undefined
+                                                            5 - i
+                                                        ] !== 0
                                                             ? "var(--YN300, #FFC400)"
                                                             : "var(--N300, #D6DFEB)"
                                                     }
@@ -211,7 +213,10 @@ export default function Ulasan({ product }: UlasanProps) {
                                           <p className="text-sm text-gray-500 font-medium ml-2">
                                               {formatDistanceToNow(
                                                   new Date(comment.created_at),
-                                                  { addSuffix: true, locale: localeId }
+                                                  {
+                                                      addSuffix: true,
+                                                      locale: localeId,
+                                                  }
                                               )}
                                           </p>
                                       </div>

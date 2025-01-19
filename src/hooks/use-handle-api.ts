@@ -192,7 +192,9 @@ const getCommentProduct = async ({
     rating?: number;
 }) => {
     const response = await api.get(
-        `/api/v1/comment/${slug_products}?limit=${limit}&offset=${offset - 1}&rating=${rating}`
+        `/api/v1/comment/${slug_products}?limit=${limit}&offset=${
+            offset - 1
+        }&rating=${rating}&sort=desc`
     );
     return response.data.data;
 };
