@@ -101,7 +101,7 @@ const ImageMagnifier: React.FC<ImageMagnifierProps> = ({
     const imgOriginal = useRef<HTMLImageElement>(null);
     const refreshImage = useRef<() => void>(() => {});
 
-    const showImageMagnifier = async () => {
+    const showImageMagnifier = React.useCallback(async () => {
         if (container.current && imgPreview.current && imgOriginal.current) {
             imgOriginal.current.onload = () => {
                 refreshImage.current = SimpleImageMagnifier(
@@ -115,7 +115,7 @@ const ImageMagnifier: React.FC<ImageMagnifierProps> = ({
         }
 
         setTimeout(showImageMagnifier, 200);
-    };
+    }, [container, imgPreview, imgOriginal]);
 
     useEffect(() => {
         showImageMagnifier();
