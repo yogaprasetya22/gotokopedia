@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛍️ Tokopedia Clone Frontend — Gotokopedia (Next.js 15)
 
-## Getting Started
+Proyek ini merupakan kloning antarmuka Tokopedia yang dibangun menggunakan **Next.js 15 (App Router)** dan terintegrasi dengan backend dari repositori [api-gotokopedia](https://github.com/yogaprasetya22/api-gotokopedia).
 
-First, run the development server:
+---
+
+## 🚀 Fitur Unggulan
+
+- ✅ **Next.js 15 App Router**
+- 🎨 Styling dengan **Tailwind CSS**
+- ⚙️ Pengelolaan state & fetching data dengan **@tanstack/react-query**
+- 🔐 Terintegrasi REST API backend (Go + PostgreSQL)
+- 📁 Struktur proyek yang rapi dan scalable
+
+---
+
+## 🧰 Stack Teknologi
+
+- **Next.js 15**
+- **React 18**
+- **TypeScript**
+- **Tailwind CSS**
+- **Axios + React Query**
+- **ESLint & Prettier**
+- **Modular foldering**
+
+---
+
+## 📦 Struktur Direktori
+
+```bash
+gotokopedia/
+├── app/                # Halaman & routing (App Router)
+├── components/         # Komponen UI (Navbar, Card, dll)
+├── hooks/              # Custom hooks (API logic via React Query)
+├── lib/                # Konfigurasi global (axios instance, util)
+├── providers/          # React context & penyedia global (theme, query client, dsb)
+├── store/              # Global state management (jika digunakan, ex: Zustand)
+├── type/               # Deklarasi & tipe data TypeScript
+├── public/             # Gambar & asset statis
+├── .env.local          # File konfigurasi environment lokal
+├── next.config.js      # Konfigurasi Next.js
+└── tsconfig.json       # TypeScript config
+````
+
+---
+
+## ⚙️ Setup & Instalasi
+
+### 1. Clone Repositori
+
+```bash
+git clone https://github.com/yogaprasetya22/gotokopedia.git
+cd gotokopedia
+```
+
+### 2. Install Dependency
+
+```bash
+npm install
+# atau
+yarn install
+```
+
+### 3. Konfigurasi Environment
+
+Buat file `.env.local`:
+
+```bash
+touch .env.local
+```
+
+Isi dengan:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
+
+Ubah nilai URL sesuai alamat backend Go Anda.
+
+---
+
+## ▶️ Menjalankan Aplikasi
+
+### Development mode
 
 ```bash
 npm run dev
-# or
+# atau
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka di browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Production build
 
-## Learn More
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📚 Perintah Tambahan
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* **Linting**: `npm run lint`
+* **Format dengan Prettier**: `npm run format`
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔗 Repositori Terkait
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* 🔧 Backend API: [api-gotokopedia](https://github.com/yogaprasetya22/api-gotokopedia)
+
+---

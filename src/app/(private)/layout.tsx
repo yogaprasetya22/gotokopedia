@@ -1,16 +1,13 @@
 "use client";
 
-import DashboardLayout from "@/components/dashboard/sidebar";
-import { useCurrentUser } from "@/hooks/user-current-user";
+import { SidebarProvider,  } from "@/components/ui/sidebar";
 import { Loader2 } from "lucide-react";
-import { redirect } from "next/navigation";
+import { useCurrentUser } from "@/hooks/user-handle-user";
+import { AppSidebar } from "@/components/app-sidebar";
+import { HeaderSidebar } from "@/components/header-sidebar";
 
-interface ProtectedLayoutProps {
-    children: React.ReactNode;
-}
-
-export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
-    const { user, isLoading } = useCurrentUser();
+export default function Layout({ children }: { children: React.ReactNode }) {
+    const { isLoading } = useCurrentUser();
 
     if (isLoading) {
         return (
@@ -22,15 +19,11 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
         );
     }
 
-    if (!user) {
-        redirect("/sign-in");
-    }
-
     return (
-        <DashboardLayout>
-            <main className="flex-1 overflow-x-hidden bg-white overflow-y-auto p-6 w-full">
-                {children}
-            </main>
-        </DashboardLayout>
+        <SidebarProvider>
+            <HeaderSidebar />
+            <AppSidebar className="pt-[4.5rem]" />
+            <main className="w-full h-full pt-[4.5rem]">{children}</main>
+        </SidebarProvider>
     );
 }

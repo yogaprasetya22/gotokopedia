@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import QueryProvider from "@/providers/tanstack/react-query-privider";
-import { ToasterProvider } from "@/providers/toaster/toaster-provider";
 import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/react";
-import { CookieProvider } from "@/providers/cookie-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -28,10 +27,8 @@ export default async function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const cookieStore = await cookies();
-    const defaultOpen = cookieStore.get("connect.sid")?.value ? true : false;
     return (
-        <CookieProvider defaultOpen={defaultOpen}>
+        <>
             <Analytics />
             <QueryProvider>
                 <html lang="en">
@@ -39,10 +36,10 @@ export default async function RootLayout({
                         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                     >
                         {children}
-                        <ToasterProvider />
+                        <Toaster />
                     </body>
                 </html>
             </QueryProvider>
-        </CookieProvider>
+        </>
     );
 }

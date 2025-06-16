@@ -4,27 +4,37 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepForward } from "lucide-react";
-import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ConfirmationPage() {
+    const { toast } = useToast();
     const token = useParams<{ token: string }>().token;
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
     const mutation = useMutation({
         mutationFn: async () => {
-            const response = await api.put(`/api/v1/users/activate/${token}`);
+            const response = await api.put(`/users/activate/${token}`);
             return response.data;
         },
         onSuccess: (data) => {
             if (data.success) {
-                toast.success("Account activated successfully");
+                toast({
+                    title: "Account Confirmed",
+                    description:
+                        "Your account has been successfully confirmed.",
+                });
                 router.push("/sign-in");
             }
         },
         onError: () => {
-            toast.error("An error occurred. Please try again.");
+            toast({
+                title: "Error",
+                description:
+                    "Failed to confirm your account. Please try again.",
+                variant: "destructive",
+            });
         },
         onSettled: () => {
             setLoading(false);

@@ -25,13 +25,19 @@ const SLIDES = [
 
 export default function Home() {
     return (
-        <div className=" w-full flex flex-col items-center gap-2">
-            <div className="max-w-[75rem]">
-                <EmblaCarousel slides={SLIDES} autoplay autoplayDelay={5000} />
-            </div>
-            <CategoryProduct />
-            <div className=" container md:px-5 lg:px-10 flex flex-col space-y-5  ">
-                <CatalogueProduct />
+        <div className="w-full flex flex-col items-center gap-2">
+            <div className="container">
+                <div className="w-full relative md:px-5">
+                    <EmblaCarousel
+                        slides={SLIDES}
+                        autoplay
+                        autoplayDelay={5000}
+                    />
+                </div>
+                <div className="flex flex-col space-y-5 justify-start">
+                    <CategoryProduct />
+                    <CatalogueProduct />
+                </div>
             </div>
         </div>
     );

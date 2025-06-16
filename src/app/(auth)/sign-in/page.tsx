@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 import { api, googleSignIn } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -19,7 +20,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 
 // Schema validasi menggunakan Zod dengan validasi confirmPassword
@@ -37,12 +37,13 @@ const formSchema = z.object({
 type SignInFormValues = z.infer<typeof formSchema>;
 
 export default function SignIn() {
+    const { toast } = useToast();
     const [loading, setLoading] = useState(false);
 
     const { mutate } = useMutation({
         mutationFn: async (data: SignInFormValues) => {
             setLoading(true);
-            const response = await api.get("/api/v1/authentication/token", {
+            const response = await api.get("authentication/token", {
                 params: {
                     email: data.email,
                     password: data.password,
@@ -52,18 +53,56 @@ export default function SignIn() {
         },
         onSuccess: () => {
             setLoading(false);
-            toast.success("Account created successfully");
+            toast({
+                variant: "default",
+                title: "Login Success",
+                description: "You have successfully logged in",
+                duration: 2000,
+            });
             window.location.href = "/";
         },
         onError: (error: {
-            response: { data: { errors: string; message: string } };
+            response: {
+                status: number;
+                data: { errors: string; message: string };
+            };
         }) => {
             // Menghindari reload, cukup tampilkan error dan reset loading state
-            toast.error(
-                error.response?.data?.errors ||
-                    error.response?.data?.message ||
-                    "An error occurred. Please try again."
-            );
+            switch (error.response.status) {
+                case 401:
+                    toast({
+                        variant: "destructive",
+                        title: "Failed Email or Password",
+                        description: "Invalid email or password",
+                        duration: 2000,
+                    });
+                    break;
+                case 403:
+                    toast({
+                        variant: "destructive",
+                        title: "Account is not activated",
+                        description: "Account is not verified",
+                        duration: 2000,
+                    });
+                    break;
+                case 404:
+                    toast({
+                        variant: "destructive",
+                        title: "Account not found",
+                        description: "Account not found",
+                        duration: 2000,
+                    });
+                    break;
+                default:
+                    toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description:
+                            error.response?.data?.errors ||
+                            "An error occurred. Please try again.",
+                        duration: 2000,
+                    });
+            }
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
@@ -167,7 +206,7 @@ export default function SignIn() {
             <Separator />
             <p className="text-center text-gray-600 text-sm">
                 Don&apos;t have an account?{" "}
-                <Link href="/sign-up" className="text-indigo-500">
+                <Link prefetch={true} href="/sign-up" className="text-indigo-500">
                     Sign Up
                 </Link>
             </p>

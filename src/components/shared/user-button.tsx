@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/hooks/user-current-user";
+import { useCurrentUser } from "@/hooks/user-handle-user";
 import { Button } from "../ui/button";
 import {
     DropdownMenu,
@@ -12,7 +12,6 @@ import Link from "next/link";
 import { Icons } from "./icons";
 import { logout } from "@/lib/api";
 import Image from "next/image";
-
 
 export const UserButton = () => {
     const { isLoading, user } = useCurrentUser();
@@ -59,17 +58,17 @@ export const UserButton = () => {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         {/* <DropdownMenuItem asChild className="py-2">
-                            <Link href={"/dashboard"}>
+                            <Link prefetch={true} href={"/dashboard"}>
                                 <Icons.dashboard className="w-4 h-4 mr-2" />
                                 <span>Dashboard</span>
                             </Link>
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuItem asChild className="py-2">
-                            <Link href={"/setting"}>
+                            <Link prefetch={true} href={"/user/settings"}>
                                 <Icons.setting className="w-4 h-4 mr-2" />
                                 <span>Setting</span>
                             </Link>
-                        </DropdownMenuItem> */}
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <Icons.logout className="w-4 h-4 mr-2" />
@@ -80,10 +79,10 @@ export const UserButton = () => {
             ) : (
                 !isLoading && (
                     <>
-                        <Link href={"/sign-in"}>
+                        <Link prefetch={true} href={"/sign-in"}>
                             <Button variant={"signIn"}>Masuk</Button>
                         </Link>
-                        <Link href={"/sign-up"}>
+                        <Link prefetch={true} href={"/sign-up"}>
                             <Button variant={"signUp"}>Daftar</Button>
                         </Link>
                     </>

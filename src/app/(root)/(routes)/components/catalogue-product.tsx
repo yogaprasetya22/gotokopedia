@@ -1,21 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { useCurrentCatalogue } from "@/hooks/use-handle-api";
-import { TypeProduct } from "@/type/utils-type";
+import { useHandleCatalogue } from "@/hooks/use-handle-product";
+import { Product } from "@/type/toko-product-type";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function CatalogueProduct() {
-    const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-        useCurrentCatalogue();
+    const { listCatalogue } = useHandleCatalogue();
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        listCatalogue;
 
     return (
         <div className="w-full flex flex-1 flex-col px-2">
             <div className="grid md:grid-cols-4 lg:grid-cols-6 grid-cols-2 gap-2 md:gap-4 content-stretch w-full ">
                 {data &&
-                    data.pages.map((product: TypeProduct, index: number) => (
+                    data.pages.map((product: Product, index: number) => (
                         <Link
+                            prefetch={true}
                             key={index}
-                            href={`/products/${product.toko.slug}/${product.slug}`}
+                            href={`/product/${product.toko.slug}/${product.slug}`}
                             className="rounded shadow-md w-full bg-neutral-50 border"
                         >
                             <div className="w-full ">
@@ -58,7 +60,6 @@ export default function CatalogueProduct() {
                                 )}
                                 <p className="text-gray-600 md:text-md text-xs flex items-center gap-1">
                                     <Image
-                                       
                                         src="https://images.tokopedia.net/img/official_store/badge_os.png"
                                         alt="verified"
                                         width={20}

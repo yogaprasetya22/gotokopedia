@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 import { api, googleSignIn } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -20,7 +21,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 
 // Schema validasi menggunakan Zod dengan validasi confirmPassword
@@ -50,6 +50,7 @@ const formSchema = z
 type SignUpFormValues = z.infer<typeof formSchema>;
 
 export default function SignUp() {
+    const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -57,7 +58,7 @@ export default function SignUp() {
         mutationFn: async (data: SignUpFormValues) => {
             setLoading(true);
             const response = await api.post(
-                "/api/v1/authentication/user",
+                "authentication/user",
                 {
                     username: data.fullname,
                     email: data.email,
@@ -73,17 +74,24 @@ export default function SignUp() {
         },
         onSuccess: () => {
             setLoading(false);
-            toast.success("Account created successfully");
+            toast({
+                variant: "default",
+                title: "Registration Success",
+                description: "You have successfully registered",
+                duration: 2000,
+            });
             router.push("/sign-in");
         },
         onError: (error: {
             response: { data: { errors: string; message: string } };
         }) => {
             // Menghindari reload, cukup tampilkan error dan reset loading state
-            toast.error(
-                error.response?.data?.errors ||
-                    "An error occurred. Please try again."
-            );
+            toast({
+                variant: "destructive",
+                title: "Registration Failed",
+                description: error.response.data.message,
+                duration: 2000,
+            });
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
@@ -223,7 +231,7 @@ export default function SignUp() {
             <Separator />
             <p className="text-center text-gray-600 text-sm">
                 Already have an account?{" "}
-                <Link href="/sign-in" className="text-indigo-500">
+                <Link prefetch={true} href="/sign-in" className="text-indigo-500">
                     Sign In
                 </Link>
             </p>

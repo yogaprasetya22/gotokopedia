@@ -49,6 +49,7 @@ const SidebarContent = () => {
 const NavLink = ({ path, link }: { path: string; link: SidebarItem }) => (
     <li>
         <Link
+            prefetch={true}
             href={link.href}
             target={link.target}
             className={cn(

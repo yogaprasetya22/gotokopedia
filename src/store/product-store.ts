@@ -1,19 +1,19 @@
-import { TypeCategory, TypeProduct } from "@/type/utils-type";
+import { Category, Product } from "@/type/toko-product-type";
 import { useMemo } from "react";
 import { create } from "zustand";
 
 export interface ICategoryStore {
-    currentCategory: TypeCategory;
-    setCurrentCategory: (category: TypeCategory) => void;
+    currentCategory: Category;
+    setCurrentCategory: (category: Category) => void;
 }
 
 export interface ICatalogueStore {
     isNextPageLoading: boolean;
     setNextPageLoading: (isLoading: boolean) => void;
-    catalogue: TypeProduct[];
+    catalogue: Product[];
     clearCatalogue: () => void;
-    setCatalogue: (catalogue: TypeProduct[]) => void;
-    addCatalogue: (catalogue: TypeProduct[]) => void;
+    setCatalogue: (catalogue: Product[]) => void;
+    addCatalogue: (catalogue: Product[]) => void;
 }
 
 export interface IPageStore {
@@ -27,7 +27,7 @@ export interface IPageStore {
 
 export const useCategoryStore = create<ICategoryStore>((set) => ({
     currentCategory: { slug: "pc-gaming" }, // Default category
-    setCurrentCategory: (category: TypeCategory) =>
+    setCurrentCategory: (category: Category) =>
         set({ currentCategory: category }),
 }));
 
@@ -35,10 +35,10 @@ export const useCatalogueStore = create<ICatalogueStore>((set) => ({
     isNextPageLoading: false,
     setNextPageLoading: (isLoading: boolean) =>
         set({ isNextPageLoading: isLoading }),
-    catalogue: [] as TypeProduct[], // Ganti `any[]` dengan `TypeProduct[]`
+    catalogue: [] as Product[], // Ganti `any[]` dengan `Product[]`
     clearCatalogue: () => set({ catalogue: [] }),
-    setCatalogue: (catalogue: TypeProduct[]) => set({ catalogue }), // Ganti `any[]` dengan `TypeProduct[]`
-    addCatalogue: (catalogue: TypeProduct[]) =>
+    setCatalogue: (catalogue: Product[]) => set({ catalogue }), // Ganti `any[]` dengan `Product[]`
+    addCatalogue: (catalogue: Product[]) =>
         set((state) => ({
             catalogue: [...state.catalogue, ...catalogue],
         })),
@@ -61,7 +61,7 @@ export const useManageCategory = () => {
     const clearPage = usePageStore((state) => state.clearPage);
 
     const changeCategory = useMemo(
-        () => (category: TypeCategory) => {
+        () => (category: Category) => {
             setCurrentCategory(category);
             clearCatalogue();
             clearPage();
