@@ -13,8 +13,8 @@ export default function ProductByToko() {
     const [loadComments, setLoadComments] = useState(false);
     const [hasLoaded, setHasLoaded] = useState(false);
     const productByTokoRef = useRef<HTMLDivElement | null>(null);
-    const { getProductsByToko } = useHandleCatalogue();
-    const { data, isLoading } = getProductsByToko(
+    const { useProductsByToko } = useHandleCatalogue();
+    const { data, isLoading } = useProductsByToko(
         params.toko_slug,
         1,
         limit,

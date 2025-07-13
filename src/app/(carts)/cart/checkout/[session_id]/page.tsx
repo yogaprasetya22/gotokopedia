@@ -2,15 +2,8 @@
 import { useHandleCheckout } from "@/hooks/use-handle-checkout";
 import { useHandlePaymentMethod } from "@/hooks/use-handle-payment-method";
 import { useHandleShippingMethod } from "@/hooks/use-handle-shipping-method";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
-import { Loader2 } from "lucide-react";
-import { use, useState } from "react";
-import ModalShippingAddress from "./components/modal-shipping-addresses";
 import { useHandleShippingAddresses } from "@/hooks/use-handle-shipping-addresses";
-import { PaymentMethod, ShippingMethod } from "@/type/order-payment-type";
-import { CartStore, CompleteCheckoutPayload } from "@/type/cart-checkout-type";
+import { use, useState } from "react";
 import { z } from "zod";
 import {
     CheckoutError,
@@ -23,6 +16,8 @@ import { ShippingMethodSection } from "./components/shipping-method-section";
 import { DeliveryNoteSection } from "./components/delivery-note-section";
 import { PaymentMethodSection } from "./components/payment-method-section";
 import { OrderSummarySection } from "./components/order-summart-section";
+import { PaymentMethod, ShippingMethod } from "@/type/order-payment-type";
+import { CartStore, CompleteCheckoutPayload } from "@/type/cart-checkout-type";
 
 const checkoutSchema = z.object({
     shipping_method_id: z.number({
@@ -50,23 +45,29 @@ export default function Checkout({
     }>({});
 
     const { session_id } = params;
-    const { getCheckoutSession, completeCheckout } = useHandleCheckout();
+    const { useCheckoutSession, completeCheckout } = useHandleCheckout();
     const {
         data: checkoutSession,
         isLoading,
         isError,
-    } = getCheckoutSession(session_id);
+    } = useCheckoutSession(session_id);
     const { cart_store } = checkoutSession || {};
-    const { defaultShippingAddresses } = useHandleShippingAddresses();
-    const defaultShippingAddress = defaultShippingAddresses.data;
+    const { useDefaultShippingAddresses } = useHandleShippingAddresses();
+    const { data: defaultShippingAddress } = useDefaultShippingAddresses();
 
-    // Shipping methods
-    const { listShippingMethods } = useHandleShippingMethod();
-    const shippingMethods = listShippingMethods.data || [];
+    const { useListShippingMethods } = useHandleShippingMethod();
+    const {
+        data: shippingMethods,
+        isLoading: isLoadingShippingMethods,
+        isError: isErrorShippingMethods,
+    } = useListShippingMethods();
 
-    // Payment methods
-    const { listPaymentMethods } = useHandlePaymentMethod();
-    const paymentMethods = listPaymentMethods.data || [];
+    const { useListPaymentMethods } = useHandlePaymentMethod();
+    const {
+        data: paymentMethods,
+        isLoading: isLoadingPayment,
+        isError: isErrorPayment,
+    } = useListPaymentMethods();
 
     const [selectedShippingMethod, setSelectedShippingMethod] =
         useState<ShippingMethod | null>(null);
@@ -76,19 +77,15 @@ export default function Checkout({
     const [useInsurance, setUseInsurance] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    if (
-        isLoading ||
-        listShippingMethods.isLoading ||
-        listPaymentMethods.isLoading
-    ) {
+    if (isLoading || isLoadingShippingMethods || isLoadingPayment) {
         return <CheckoutLoading />;
     }
 
     if (
         isError ||
         !checkoutSession ||
-        listShippingMethods.isError ||
-        listPaymentMethods.isError
+        isErrorShippingMethods ||
+        isErrorPayment
     ) {
         return <CheckoutError />;
     }
@@ -117,7 +114,7 @@ export default function Checkout({
             return;
         }
 
-        setFormErrors({}); // bersihkan error jika sukses
+        setFormErrors({});
 
         const orderData: CompleteCheckoutPayload = {
             session_id,
@@ -148,7 +145,7 @@ export default function Checkout({
                                 store={store}
                             />
                             <ShippingMethodSection
-                                methods={shippingMethods}
+                                methods={shippingMethods || []}
                                 selectedMethod={selectedShippingMethod}
                                 onSelectMethod={setSelectedShippingMethod}
                                 error={formErrors.shipping_method_id}
@@ -168,7 +165,7 @@ export default function Checkout({
 
                 <aside className="w-[40%] hidden md:flex flex-col gap-2 sticky top-[70px] h-fit">
                     <PaymentMethodSection
-                        methods={paymentMethods}
+                        methods={paymentMethods || []}
                         selectedMethod={selectedPaymentMethod}
                         onSelectMethod={setSelectedPaymentMethod}
                         error={formErrors.payment_method_id}

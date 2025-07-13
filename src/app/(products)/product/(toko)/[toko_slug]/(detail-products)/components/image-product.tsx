@@ -1,7 +1,6 @@
 import SimpleImageMagnifier from "@/components/ui/image-zoom";
 import { Product } from "@/type/toko-product-type";
 import dynamic from "next/dynamic";
-// import { CarouselSize } from "./carosul-size";
 const CarouselSize = dynamic(
     () => import("./carosul-size").then((mod) => mod.CarouselSize),
     { ssr: false }

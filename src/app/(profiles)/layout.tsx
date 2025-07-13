@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils"; // pastikan punya fungsi `cn` (className merge helper)
+import { useEffect, useState } from "react";
 
 interface RootLayoutProps {
     children: React.ReactNode;
@@ -42,6 +43,11 @@ const TAB = [
 
 export default function RootLayout({ children }: RootLayoutProps) {
     const pathname = usePathname();
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Mapping default accordion open berdasarkan pathname
     const getDefaultAccordionValue = () => {
@@ -63,42 +69,50 @@ export default function RootLayout({ children }: RootLayoutProps) {
                         <div className="w-full md:w-[25%] flex flex-col gap-4 sticky top-[70px] h-fit">
                             <div className="flex flex-col gap-2 bg-white rounded-lg shadow-md p-4 border">
                                 <h2 className="text-lg font-bold mb-2">Yoga</h2>
-                                <div className="border-t pt-3">
-                                    <Accordion
-                                        type="multiple"
-                                        className="w-full"
-                                        defaultValue={accordionValues}
-                                    >
-                                        {TAB.map((section) => (
-                                            <AccordionItem
-                                                key={section.item_id}
-                                                value={section.item_id}
-                                            >
-                                                <AccordionTrigger className="py-2 hover:no-underline font-semibold text-sm">
-                                                    {section.label}
-                                                </AccordionTrigger>
-                                                <AccordionContent className="pl-6 py-1 flex flex-col gap-1">
-                                                    {section.links.map(
-                                                        (link, index) => (
-                                                            <Link
-                                                                key={index}
-                                                                href={link.url}
-                                                                className={cn(
-                                                                    "py-1 text-xs",
-                                                                    pathname ===
-                                                                        link.url &&
-                                                                        "text-green-400 border-b border-green-400"
-                                                                )}
-                                                            >
-                                                                {link.nama_path}
-                                                            </Link>
-                                                        )
-                                                    )}
-                                                </AccordionContent>
-                                            </AccordionItem>
-                                        ))}
-                                    </Accordion>
-                                </div>
+                                {isMounted && (
+                                    <div className="border-t pt-3">
+                                        <Accordion
+                                            type="multiple"
+                                            className="w-full"
+                                            defaultValue={
+                                                isMounted ? accordionValues : []
+                                            }
+                                        >
+                                            {TAB.map((section) => (
+                                                <AccordionItem
+                                                    key={section.item_id}
+                                                    value={section.item_id}
+                                                >
+                                                    <AccordionTrigger className="py-2 hover:no-underline font-semibold text-sm">
+                                                        {section.label}
+                                                    </AccordionTrigger>
+                                                    <AccordionContent className="pl-6 py-1 flex flex-col gap-1">
+                                                        {section.links.map(
+                                                            (link, index) => (
+                                                                <Link
+                                                                    key={index}
+                                                                    href={
+                                                                        link.url
+                                                                    }
+                                                                    className={cn(
+                                                                        "py-1 text-xs",
+                                                                        pathname ===
+                                                                            link.url &&
+                                                                            "text-green-400 border-b border-green-400"
+                                                                    )}
+                                                                >
+                                                                    {
+                                                                        link.nama_path
+                                                                    }
+                                                                </Link>
+                                                            )
+                                                        )}
+                                                    </AccordionContent>
+                                                </AccordionItem>
+                                            ))}
+                                        </Accordion>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         {children}

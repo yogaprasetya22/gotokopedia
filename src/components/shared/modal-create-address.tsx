@@ -58,6 +58,7 @@ export default function ModalCreateAddress({
             });
         } catch (error) {
             // Error handling is already done in the mutation
+            console.error("Failed to create address:", error);
         }
     };
 

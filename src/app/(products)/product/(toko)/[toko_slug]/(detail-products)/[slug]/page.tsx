@@ -15,8 +15,8 @@ export default function Product({
     params: Promise<{ slug: string; toko_slug: string }>;
 }) {
     const params = use(paramsPromise); // ⬅️ Unwrap promise
-    const { getProductDetail } = useHandleCatalogue();
-    const { isLoading, data: product } = getProductDetail(
+    const { useProductDetail } = useHandleCatalogue();
+    const { isLoading, data: product } = useProductDetail(
         params.toko_slug,
         params.slug
     );

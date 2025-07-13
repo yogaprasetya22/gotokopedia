@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/hooks/user-handle-user";
+import { useCurrentUser } from "@/hooks/use-handle-user";
 import { Button } from "../ui/button";
 import {
     DropdownMenu,

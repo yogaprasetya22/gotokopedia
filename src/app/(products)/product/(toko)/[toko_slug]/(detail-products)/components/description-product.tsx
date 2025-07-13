@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Product } from "@/type/utils-type";
+import { Product } from "@/type/toko-product-type";
 import { MapPinCheck, ShoppingCart, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

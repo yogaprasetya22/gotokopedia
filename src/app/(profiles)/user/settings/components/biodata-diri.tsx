@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Switch } from "@/components/ui/switch"; // asumsikan pakai shadcn/ui
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, Lock } from "lucide-react";
 
 export default function BiodataDiri() {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     return (
         <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Kiri - Foto dan Tombol */}
@@ -83,10 +89,12 @@ export default function BiodataDiri() {
                         Fitur ini akan otomatis menyaring hasil pencarian sesuai
                         kebijakan dan batasan usia pengguna
                     </p>
-                    <div className="flex items-center space-x-2">
-                        <span>Aktifkan</span>
-                        <Switch defaultChecked />
-                    </div>
+                    {isMounted && (
+                        <div className="flex items-center space-x-2">
+                            <span>Aktifkan</span>
+                            <Switch defaultChecked />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -3,14 +3,9 @@
 import * as React from "react";
 import {
     AudioWaveform,
-    BookOpen,
-    Bot,
     Command,
     Home,
     GalleryVerticalEnd,
-    Map,
-    PieChart,
-    Settings2,
     SquareTerminal,
 } from "lucide-react";
 
@@ -49,7 +44,8 @@ const data = {
     ],
     navMain: [
         {
-            title: "Playground",
+            label: "Product",
+            title: "Product",
             url: "#",
             icon: SquareTerminal,
             isActive: true,
@@ -72,7 +68,7 @@ const data = {
     items: [
         {
             name: "Home",
-            url: "#",
+            url: "my-store",
             icon: Home,
         },
     ],

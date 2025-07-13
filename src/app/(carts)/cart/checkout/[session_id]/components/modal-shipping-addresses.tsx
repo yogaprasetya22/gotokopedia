@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -14,26 +13,20 @@ import ModalCreateAddress from "@/components/shared/modal-create-address";
 import { ShippingAddress } from "@/type/shipping-addres-type";
 
 export default function ModalShippingAddress() {
-    const {
-        listShippingAddresses,
-        defaultShippingAddresses,
-        updateShippingAddress,
-    } = useHandleShippingAddresses();
-    const { data: defaultAddresses } = defaultShippingAddresses;
-    const { data: shippingAddresses, isLoading, error } = listShippingAddresses;
+    const { useListShippingAddresses, useDefaultShippingAddresses } =
+        useHandleShippingAddresses();
+    const { data: shippingAddresses } = useListShippingAddresses();
+    const { data: defaultAddresses } = useDefaultShippingAddresses();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
 
     const handleSelectAddress = (id: number) => {
         setSelectedAddress(id);
-        // Here you would typically call an API to set the default address
-        // For now, we'll just close the modal
         setIsOpen(false);
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            {/* Trigger Button - Shows current address */}
             <DialogTrigger asChild>
                 <div className="flex items-start justify-between p-4 border rounded-lg">
                     <div className="flex flex-col gap-2">
@@ -71,7 +64,6 @@ export default function ModalShippingAddress() {
                 </div>
             </DialogTrigger>
 
-            {/* Modal Content - Address Selection */}
             <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
@@ -83,7 +75,6 @@ export default function ModalShippingAddress() {
                 </DialogHeader>
 
                 <div className="space-y-4">
-                    {/* Search Section */}
                     <div className="bg-gray-100 p-3 rounded-lg">
                         <h3 className="font-semibold mb-2">
                             Tulis Nama Alamat / Kota / Kecamatan tujuan
@@ -99,7 +90,6 @@ export default function ModalShippingAddress() {
                         </div>
                     </div>
 
-                    {/* Add New Address Button */}
                     <ModalCreateAddress>
                         <Button variant="outline" className="w-full">
                             <Plus className="w-4 h-4 mr-2" />
@@ -107,7 +97,6 @@ export default function ModalShippingAddress() {
                         </Button>
                     </ModalCreateAddress>
 
-                    {/* All Addresses Section */}
                     <div>
                         <h3 className="font-semibold mb-2">Semua Alamat</h3>
                         <div className="space-y-4 ">

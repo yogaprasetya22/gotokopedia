@@ -74,7 +74,7 @@ const EmblaCarousel: React.FC<EmblaCarouselProps> = ({
                                         // fill // Mengganti layout dengan fill
                                         sizes="(max-width: 500px) 100vw, 500px" // Menambahkan sizes untuk responsivitas
                                         width={500} // Specify width
-                                        height={300} // Specify height
+                                        height={500} // Specify height
                                     />
                                 </div>
                             ))}

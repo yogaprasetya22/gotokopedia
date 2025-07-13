@@ -6,9 +6,17 @@ import { useCurrentToko } from "@/hooks/use-handle-api";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { use } from "react";
 
-export default function Toko({ params }: { params: { toko_slug: string } }) {
-    const { isLoading, toko } = useCurrentToko(params.toko_slug);
+interface TokoProps {
+    params: Promise<{
+        toko_slug: string;
+    }>;
+}
+
+export default function Toko({ params }: TokoProps) {
+    const { toko_slug } = use(params);
+    const { isLoading, toko } = useCurrentToko(toko_slug);
     const origin: string = useOrigin();
     return (
         <div className="w-full bg-white flex justify-center">
@@ -30,7 +38,8 @@ export default function Toko({ params }: { params: { toko_slug: string } }) {
                                         />
                                     )}
                                     <div className="flex flex-col gap-2 py-2">
-                                        <Link prefetch={true}
+                                        <Link
+                                            prefetch={true}
                                             href={`${origin}/product/${toko?.slug}`}
                                             className="text-sm text-black font-semibold flex items-center gap-2"
                                         >
@@ -71,7 +80,8 @@ export default function Toko({ params }: { params: { toko_slug: string } }) {
                             <div className="grid md:grid-cols-6 grid-cols-2 gap-2 md:gap-4 content-stretch w-full ">
                                 {toko &&
                                     toko.products?.map((product, index) => (
-                                        <Link prefetch={true}
+                                        <Link
+                                            prefetch={true}
                                             key={index}
                                             href={`/product/${product.toko.slug}/${product.slug}`}
                                             className="rounded shadow-lg m-1 md:m-2 w-full bg-neutral-50 border"

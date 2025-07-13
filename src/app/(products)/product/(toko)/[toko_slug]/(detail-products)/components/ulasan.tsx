@@ -24,8 +24,8 @@ export default function Ulasan({ product }: UlasanProps) {
     const ulasanRef = useRef<HTMLDivElement | null>(null);
 
     // API call hanya dilakukan saat loadComments bernilai true
-    const { getCommentsByProduct } = useHandleCommentProduct();
-    const { data, isLoading } = getCommentsByProduct(
+    const { useCommentsByProduct } = useHandleCommentProduct();
+    const { data, isLoading } = useCommentsByProduct(
         product.slug,
         page,
         limit,

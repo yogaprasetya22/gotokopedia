@@ -78,8 +78,8 @@ export function CarouselSize({
                             isHovered ? "opacity-100" : "opacity-0"
                         }`}
                     >
-                        <CarouselPrevious variant="carosul" />
-                        <CarouselNext variant="carosul" />
+                        <CarouselPrevious variant="default" />
+                        <CarouselNext variant="default" />
                     </div>
                 </Carousel>
             ) : (

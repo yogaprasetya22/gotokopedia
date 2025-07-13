@@ -1,7 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
 import { api } from "@/lib/api";
-import { CheckoutSession, CompleteCheckoutPayload, StartCheckoutPayload } from "@/type/cart-checkout-type";
+import {
+    CheckoutSession,
+    CompleteCheckoutPayload,
+    StartCheckoutPayload,
+} from "@/type/cart-checkout-type";
+import { AxiosError } from "axios";
 
 export const useHandleCheckout = () => {
     const queryClient = useQueryClient();
@@ -10,7 +15,7 @@ export const useHandleCheckout = () => {
     // Start checkout session
     const startCheckout = useMutation<
         CheckoutSession,
-        Error,
+        AxiosError<{ message?: string }>,
         StartCheckoutPayload
     >({
         mutationFn: async (payload) => {
@@ -24,57 +29,57 @@ export const useHandleCheckout = () => {
             });
             window.location.href = `/cart/checkout/${data.session_id}`;
         },
-        onError: (error: any) => {
-            console.log("Error starting checkout:", error);
-            if(error?.response?.status == 400) {
-            toast({
-                variant: "warning",
-                title: "Gage checkout",
-                description:
-                    "Karena pada product tersebut stock sudah habis, checkout tidak dapat dilanjutkan",
-            });
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                toast({
+                    variant: "warning",
+                    title: "Gagal checkout", // Fixed typo from "Gage" to "Gagal"
+                    description:
+                        "Karena pada product tersebut stock sudah habis, checkout tidak dapat dilanjutkan",
+                });
             }
         },
     });
 
     // Get checkout session details
-// Get checkout session details
-const getCheckoutSession = (sessionId: string) => {
-    const queryResult = useQuery({
-        queryKey: ["checkoutSession", sessionId],
-        queryFn: async () => {
-            const response = await api.get(`/checkout/${sessionId}`);
-            return response.data.data;
-        },
-        enabled: !!sessionId,
-        staleTime: 1000 * 60 * 5
-    });
-
-    // Handle case where data is null
-    if (queryResult.data === null && queryResult.isSuccess) {
-        toast({
-            variant: "destructive",
-            title: "Invalid checkout session",
-            description: "Checkout session not found",
+    const useCheckoutSession = (sessionId: string) => {
+        const queryResult = useQuery<CheckoutSession | null, AxiosError>({
+            queryKey: ["checkoutSession", sessionId],
+            queryFn: async () => {
+                const response = await api.get(`/checkout/${sessionId}`);
+                return response.data.data;
+            },
+            enabled: !!sessionId,
+            staleTime: 1000 * 60 * 5,
         });
-        window.location.href = "/cart";
-    }
 
-    // Handle error
-    if (queryResult.error) {
-        if ((queryResult.error as any).response?.status === 404) {
+        // Handle error side effects
+        if (queryResult.error && queryResult.error.response?.status === 404) {
+            toast({
+                variant: "destructive",
+                title: "Invalid checkout session",
+                description: "Checkout session not found",
+            });
             window.location.href = "/cart";
         }
-    }
 
-    return queryResult;
-};
+        // Handle null data side effects
+        if (queryResult.isSuccess && queryResult.data === null) {
+            toast({
+                variant: "destructive",
+                title: "Invalid checkout session",
+                description: "Checkout session not found",
+            });
+            window.location.href = "/cart";
+        }
 
+        return queryResult;
+    };
 
     // Complete checkout
     const completeCheckout = useMutation<
         void,
-        Error,
+        AxiosError<{ message?: string }>,
         CompleteCheckoutPayload
     >({
         mutationFn: async (payload) => {
@@ -88,19 +93,20 @@ const getCheckoutSession = (sessionId: string) => {
             queryClient.invalidateQueries({ queryKey: ["infiniteCart"] });
             window.location.href = "/order-list";
         },
-        onError: (error: any) => {
+        onError: (error) => {
             toast({
                 variant: "destructive",
                 title: "Failed to complete checkout",
                 description:
-                    error.response?.data?.message || "Failed to complete checkout",
+                    error.response?.data?.message ||
+                    "Failed to complete checkout",
             });
         },
     });
 
     return {
         startCheckout,
-        getCheckoutSession,
+        useCheckoutSession, // Renamed to follow hook conventions
         completeCheckout,
     };
 };

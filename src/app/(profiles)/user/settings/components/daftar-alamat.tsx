@@ -6,12 +6,10 @@ import ModalCreateAddress from "@/components/shared/modal-create-address";
 import { ShippingAddress } from "@/type/shipping-addres-type";
 
 export default function DaftarAlamat() {
-    const { listShippingAddresses, updateShippingAddress } =
+    const { useListShippingAddresses, updateShippingAddress } =
         useHandleShippingAddresses();
+    const { data: shippingAddresses } = useListShippingAddresses();
 
-    const { data: shippingAddresses, isLoading, error } = listShippingAddresses;
-
-    const [isOpen, setIsOpen] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
 
     const handleSetDefaultAddress = async (id: number) => {
@@ -20,9 +18,8 @@ export default function DaftarAlamat() {
                 id,
                 data: { is_default: true },
             });
-            // The mutation will automatically invalidate queries and update the UI
         } catch (error) {
-            // Error handling is already done in the mutation
+            console.error("Failed to set default address:", error);
         }
     };
 

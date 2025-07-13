@@ -1,7 +1,7 @@
 "use client";
 
 import { useHandleCart } from "@/hooks/use-handle-cart";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SkeletonCart from "./components/skeleton-cart";
 import ErrorCart from "./components/error-cart";
 import ContentCart from "./components/content-cart";
@@ -9,6 +9,7 @@ import OrderSummaryCart from "./components/order-summary-cart";
 import { CartItem, CartStore } from "@/type/cart-checkout-type";
 import { Product, Toko } from "@/type/toko-product-type";
 import EmptyCart from "./components/empty-cart";
+import { isEqual } from "lodash";
 
 export interface SelectedItems {
     [storeId: string]: {
@@ -33,22 +34,27 @@ export default function Cart() {
     const [selectStore, setSelectStore] = useState<SelectStore>({
         storeId: [],
     });
+    const prevStoresRef = useRef(stores);
 
     // Initialize selectedItems
     useEffect(() => {
         const isSelectedInitialized = Object.keys(selectedItems).length > 0;
         if (!stores || isSelectedInitialized) return;
 
-        const initialSelected: SelectedItems = {};
-        stores.forEach((store: CartStoreWithItems) => {
-            initialSelected[store.id] = {};
-            store.items?.forEach((item) => {
-                initialSelected[store.id][item.id] = false;
+        // Only initialize if stores have actually changed
+        if (!isEqual(prevStoresRef.current, stores)) {
+            const initialSelected: SelectedItems = {};
+            stores.forEach((store: CartStoreWithItems) => {
+                initialSelected[store.id] = {};
+                store.items?.forEach((item) => {
+                    initialSelected[store.id][item.id] = false;
+                });
             });
-        });
 
-        setSelectedItems(initialSelected);
-    }, [JSON.stringify(stores)]);
+            setSelectedItems(initialSelected);
+            prevStoresRef.current = stores;
+        }
+    }, [stores, selectedItems]);
 
     // Update selectStore based on selectedItems
     useEffect(() => {

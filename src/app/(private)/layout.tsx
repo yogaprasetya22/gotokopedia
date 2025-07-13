@@ -2,7 +2,7 @@
 
 import { SidebarProvider,  } from "@/components/ui/sidebar";
 import { Loader2 } from "lucide-react";
-import { useCurrentUser } from "@/hooks/user-handle-user";
+import { useCurrentUser } from "@/hooks/use-handle-user";
 import { AppSidebar } from "@/components/app-sidebar";
 import { HeaderSidebar } from "@/components/header-sidebar";
 

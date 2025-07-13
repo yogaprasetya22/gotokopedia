@@ -14,12 +14,8 @@ import { useRef, useState } from "react";
 import { Form } from "@/components/ui/form";
 import { useForm, UseFormRegisterReturn } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { AxiosResponse } from "axios";
-import { useToast } from "@/hooks/use-toast";
-import { CommentData } from "@/type/comment-product-type";
 import { useHandleCommentProduct } from "@/hooks/use-handle-comment-product";
+import { CommentData } from "@/type/comment-product-type";
 
 export function ModalComment({ id, slug }: { id: number; slug: string }) {
     const [rating, setRating] = useState(0);
@@ -32,14 +28,13 @@ export function ModalComment({ id, slug }: { id: number; slug: string }) {
     };
 
     const { useSubmitComment } = useHandleCommentProduct();
-    const mutation = useSubmitComment(id, slug); // <- kirim slug_products untuk invalidasi
+    const mutation = useSubmitComment(id, slug);
 
     const handleSubmit = form.handleSubmit((data: CommentData) => {
         mutation.mutate(data, {
             onSuccess: () => {
                 form.reset();
                 setIsOpen(false);
-                // Tidak perlu fetch ulang manual karena invalidateQueries sudah mengurus
             },
         });
     });

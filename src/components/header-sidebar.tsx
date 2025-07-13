@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { UserButton } from "./shared/user-button";
 import Image from "next/image";
-import { CartNavigation } from "./cart";
-import { Button } from "@/components/ui/button"; // atau ganti dengan tombol milikmu
 
 export function HeaderSidebar() {
     return (

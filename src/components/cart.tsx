@@ -12,9 +12,10 @@ import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useHandleCart } from "@/hooks/use-handle-cart";
 import { CartStore } from "@/type/cart-checkout-type";
+import Image from "next/image";
 
 export function CartNavigation() {
-    const { carts, isLoading, isError } = useHandleCart();
+    const { carts, isLoading } = useHandleCart();
 
     return (
         <HoverCard openDelay={100} closeDelay={200}>
@@ -35,7 +36,8 @@ export function CartNavigation() {
                         <h3 className="font-medium text-base">
                             Keranjang ({carts?.total_items || 0} barang)
                         </h3>
-                        <Link prefetch={true}
+                        <Link
+                            prefetch={true}
                             href="/cart"
                             className="text-sm text-green-500 hover:underline font-semibold"
                         >
@@ -65,11 +67,13 @@ export function CartNavigation() {
                                     <div key={store.id} className="mb-4">
                                         <div className="flex items-center gap-2 mb-2">
                                             {store.toko.image_profile && (
-                                                <img
+                                                <Image
                                                     src={
                                                         store.toko.image_profile
                                                     }
                                                     alt={store.toko.name}
+                                                    width={24}
+                                                    height={24}
                                                     className="h-6 w-6 rounded-full"
                                                 />
                                             )}
@@ -86,7 +90,7 @@ export function CartNavigation() {
                                                 {item.product.image_urls
                                                     ?.length > 0 && (
                                                     <div className="h-16 w-16 rounded-md border overflow-hidden">
-                                                        <img
+                                                        <Image
                                                             src={
                                                                 item.product
                                                                     .image_urls[0]
@@ -95,6 +99,8 @@ export function CartNavigation() {
                                                                 item.product
                                                                     .name
                                                             }
+                                                            width={64}
+                                                            height={64}
                                                             className="h-full w-full object-cover"
                                                         />
                                                     </div>

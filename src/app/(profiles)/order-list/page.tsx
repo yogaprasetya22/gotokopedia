@@ -4,13 +4,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import React from "react";
-import { useHandleOrder } from "@/hooks/use-handle-order";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Order, OrderItem } from "@/type/order-payment-type";
+import Image from "next/image";
+import { useHandleOrder } from "@/hooks/use-handle-order";
 
 export default function OrderList() {
-    const { listOrders } = useHandleOrder();
-    const { data: orders, isLoading, isError } = listOrders();
+    const { useListOrders } = useHandleOrder();
+    const orderQuery = useListOrders();
+
+    if (!orderQuery) {
+        return <p>Gagal memuat daftar pesanan.</p>;
+    }
+
+    const { data: orders, isLoading, isError } = orderQuery;
 
     if (isLoading) {
         return (
@@ -56,9 +63,14 @@ export default function OrderList() {
 
                                 {order.items.map((item: OrderItem) => (
                                     <div key={item.id} className="flex gap-3">
-                                        <img
-                                            src={item.toko.image_profile}
+                                        <Image
+                                            src={
+                                                item.toko.image_profile ||
+                                                "/default-profile.png"
+                                            }
                                             alt={item.toko.name}
+                                            width={20}
+                                            height={20}
                                             className="h-5 w-5 object-contain"
                                         />
                                         <div className="flex-1 flex flex-col">
@@ -66,12 +78,14 @@ export default function OrderList() {
                                                 {item.toko.name}
                                             </p>
                                             <div className="flex gap-3 mt-2">
-                                                <img
+                                                <Image
                                                     src={
                                                         item.product
                                                             .image_urls[0]
                                                     }
                                                     alt={item.product.name}
+                                                    width={64}
+                                                    height={64}
                                                     className="h-16 w-16 object-cover rounded border"
                                                 />
                                                 <div className="flex-1">
