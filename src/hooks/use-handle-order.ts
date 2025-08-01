@@ -8,6 +8,7 @@ import {
     UpdateOrderStatusRequest,
 } from "@/type/order-payment-type";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
 
 export const useHandleOrder = () => {
     const queryClient = useQueryClient();
@@ -53,23 +54,27 @@ export const useHandleOrder = () => {
             staleTime: 1000 * 60 * 5, // 5 minutes
         });
 
-        if (queryResult.isError) {
-            toast({
-                variant: "destructive",
-                title: "Failed to fetch order",
-                description:
-                    queryResult.error.response?.data?.message ||
-                    "An error occurred",
-            });
-        }
+        useEffect(() => {
+            if (queryResult.isError) {
+                toast({
+                    variant: "destructive",
+                    title: "Failed to fetch order",
+                    description:
+                        queryResult.error.response?.data?.message ||
+                        "An error occurred",
+                });
+            }
+        }, [queryResult.error, toast]);
 
-        if (queryResult.isSuccess && queryResult.data === null) {
-            toast({
-                variant: "destructive",
-                title: "Order not found",
-                description: "The requested order does not exist",
-            });
-        }
+        useEffect(() => {
+            if (queryResult.isSuccess && queryResult.data === null) {
+                toast({
+                    variant: "destructive",
+                    title: "Order not found",
+                    description: "The requested order does not exist",
+                });
+            }
+        }, [queryResult.error, toast]);
 
         return queryResult;
     };
@@ -96,23 +101,26 @@ export const useHandleOrder = () => {
             staleTime: 1000 * 60 * 5, // 5 minutes
         });
 
-        if (queryResult.isError) {
-            toast({
-                variant: "destructive",
-                title: "Failed to fetch orders",
-                description:
-                    queryResult.error.response?.data?.message ||
-                    "An error occurred",
-            });
-        }
+        useEffect(() => {
+            if (queryResult.isError) {
+                toast({
+                    variant: "destructive",
+                    title: "Failed to fetch orders",
+                    description:
+                        queryResult.error.response?.data?.message ||
+                        "An error occurred",
+                });
+            }
+        }, [queryResult.error, toast]);
 
-        if (queryResult.isSuccess && queryResult.data === null) {
-            toast({
-                variant: "destructive",
-                title: "No orders found",
-                description: "You have no orders yet",
-            });
-        }
+        useEffect(() => {
+            if (queryResult.isSuccess && queryResult.data === null) {
+                toast({
+                    title: "No orders found",
+                    description: "You have no orders yet",
+                });
+            }
+        }, [queryResult.isSuccess, queryResult.data, toast]);
 
         return queryResult;
     };

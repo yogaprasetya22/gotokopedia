@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
 import { api } from "@/lib/api";
@@ -8,9 +9,19 @@ export const useHandleShippingAddresses = () => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
 
-    // Get all shipping addresses
+    const showErrorToast = (
+        title: string,
+        error?: AxiosError<{ message?: string }>
+    ) => {
+        toast({
+            variant: "destructive",
+            title,
+            description: error?.response?.data?.message || "Terjadi kesalahan",
+        });
+    };
+
     const useListShippingAddresses = () => {
-        const queryResult = useQuery<
+        const query = useQuery<
             ShippingAddress[] | null,
             AxiosError<{ message?: string }>
         >({
@@ -22,22 +33,20 @@ export const useHandleShippingAddresses = () => {
             staleTime: 10000,
         });
 
-        if (queryResult.isError) {
-            toast({
-                variant: "destructive",
-                title: "Gagal mengambil daftar alamat pengiriman",
-                description:
-                    queryResult.error.response?.data?.message ||
-                    "Terjadi kesalahan",
-            });
-        }
+        useEffect(() => {
+            if (query.isError) {
+                showErrorToast(
+                    "Gagal mengambil daftar alamat pengiriman",
+                    query.error
+                );
+            }
+        }, [query.isError, query.error]);
 
-        return queryResult;
+        return query;
     };
 
-    // default shipping addresses
     const useDefaultShippingAddresses = () => {
-        const queryResult = useQuery<
+        const query = useQuery<
             ShippingAddress | null,
             AxiosError<{ message?: string }>
         >({
@@ -49,54 +58,54 @@ export const useHandleShippingAddresses = () => {
             staleTime: 10000,
         });
 
-        if (queryResult.isError) {
-            toast({
-                variant: "destructive",
-                title: "Gagal mengambil alamat pengiriman default",
-                description:
-                    queryResult.error.response?.data?.message ||
-                    "Terjadi kesalahan",
-            });
-        }
+        useEffect(() => {
+            if (query.isError) {
+                showErrorToast(
+                    "Gagal mengambil alamat pengiriman default",
+                    query.error
+                );
+            }
+        }, [query.isError, query.error]);
 
-        return queryResult;
+        return query;
     };
 
-    // Get shipping address by id
     const useShippingAddress = (id: string | number) => {
-        const queryResult = useQuery<
+        const query = useQuery<
             ShippingAddress,
             AxiosError<{ message?: string }>
         >({
             queryKey: ["shipping-address", id],
             queryFn: async () => {
-                const response = await api.get(`/shipping-addresses/${id}`);
-                return response.data.data;
+                const res = await api.get(`/shipping-addresses/${id}`);
+                return res.data.data;
             },
             enabled: !!id,
             staleTime: 10000,
         });
 
-        if (queryResult.isError) {
-            toast({
-                variant: "destructive",
-                title: "Gagal mengambil alamat pengiriman",
-                description:
-                    queryResult.error.response?.data?.message ||
-                    "Terjadi kesalahan",
-            });
-        }
-        if (queryResult.isSuccess && queryResult.data === null) {
-            toast({
-                variant: "destructive",
-                title: "Alamat pengiriman tidak ditemukan",
-                description: "Alamat pengiriman yang diminta tidak ada",
-            });
-        }
-        return queryResult;
+        useEffect(() => {
+            if (query.isError) {
+                showErrorToast(
+                    "Gagal mengambil alamat pengiriman",
+                    query.error
+                );
+            }
+        }, [query.isError, query.error]);
+
+        useEffect(() => {
+            if (query.isSuccess && query.data === null) {
+                toast({
+                    variant: "destructive",
+                    title: "Alamat pengiriman tidak ditemukan",
+                    description: "Alamat pengiriman yang diminta tidak ada",
+                });
+            }
+        }, [query.isSuccess, query.data]);
+
+        return query;
     };
 
-    // Create shipping address
     const createShippingAddress = useMutation<
         ShippingAddress,
         AxiosError<{ message?: string }>,
@@ -107,22 +116,18 @@ export const useHandleShippingAddresses = () => {
             return res.data.data;
         },
         onSuccess: () => {
-            toast({
-                title: "Berhasil menambah alamat pengiriman",
+            queueMicrotask(() => {
+                toast({ title: "Berhasil menambah alamat pengiriman" });
+                queryClient.invalidateQueries({
+                    queryKey: ["shipping-addresses"],
+                });
             });
-            queryClient.invalidateQueries({ queryKey: ["shipping-addresses"] });
         },
         onError: (error) => {
-            toast({
-                variant: "destructive",
-                title: "Gagal menambah alamat pengiriman",
-                description:
-                    error.response?.data?.message || "Terjadi kesalahan",
-            });
+            showErrorToast("Gagal menambah alamat pengiriman", error);
         },
     });
 
-    // Update shipping address
     const updateShippingAddress = useMutation<
         ShippingAddress,
         AxiosError<{ message?: string }>,
@@ -133,22 +138,18 @@ export const useHandleShippingAddresses = () => {
             return res.data.data;
         },
         onSuccess: () => {
-            toast({
-                title: "Berhasil mengubah alamat pengiriman",
+            queueMicrotask(() => {
+                toast({ title: "Berhasil mengubah alamat pengiriman" });
+                queryClient.invalidateQueries({
+                    queryKey: ["shipping-addresses"],
+                });
             });
-            queryClient.invalidateQueries({ queryKey: ["shipping-addresses"] });
         },
         onError: (error) => {
-            toast({
-                variant: "destructive",
-                title: "Gagal mengubah alamat pengiriman",
-                description:
-                    error.response?.data?.message || "Terjadi kesalahan",
-            });
+            showErrorToast("Gagal mengubah alamat pengiriman", error);
         },
     });
 
-    // Delete shipping address
     const deleteShippingAddress = useMutation<
         void,
         AxiosError<{ message?: string }>,
@@ -158,18 +159,15 @@ export const useHandleShippingAddresses = () => {
             await api.delete(`/shipping-addresses/${id}`);
         },
         onSuccess: () => {
-            toast({
-                title: "Berhasil menghapus alamat pengiriman",
+            queueMicrotask(() => {
+                toast({ title: "Berhasil menghapus alamat pengiriman" });
+                queryClient.invalidateQueries({
+                    queryKey: ["shipping-addresses"],
+                });
             });
-            queryClient.invalidateQueries({ queryKey: ["shipping-addresses"] });
         },
         onError: (error) => {
-            toast({
-                variant: "destructive",
-                title: "Gagal menghapus alamat pengiriman",
-                description:
-                    error.response?.data?.message || "Terjadi kesalahan",
-            });
+            showErrorToast("Gagal menghapus alamat pengiriman", error);
         },
     });
 

@@ -52,7 +52,7 @@ export function Header() {
 
                     {/* Toko Saya */}
                     <Link
-                        href="/my-store"
+                        href="/private"
                         className="flex items-center space-x-2"
                     >
                         <Button variant="ghost">

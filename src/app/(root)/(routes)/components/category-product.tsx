@@ -9,7 +9,7 @@ export default function CategoryProduct() {
     const currentCategory = useCategoryStore((state) => state.currentCategory);
 
     return (
-        <div className="w-full flex space-x-4 sticky top-0 pt-[4.5rem] bg-white pb-2 z-40 ">
+        <div className="w-full flex space-x-4 sticky top-0 pt-[4.5rem] bg-white pb-2 z-40 px-2">
             {isLoading ? (
                 <>
                     <div className=" h-[50px] md:h-[64px] w-[100px] md:w-[216px] p-2 bg-gray-300 animate-pulse"></div>

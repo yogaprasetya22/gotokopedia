@@ -7,6 +7,7 @@ import {
     StartCheckoutPayload,
 } from "@/type/cart-checkout-type";
 import { AxiosError } from "axios";
+import { useEffect } from "react";
 
 export const useHandleCheckout = () => {
     const queryClient = useQueryClient();
@@ -54,24 +55,31 @@ export const useHandleCheckout = () => {
         });
 
         // Handle error side effects
-        if (queryResult.error && queryResult.error.response?.status === 404) {
-            toast({
-                variant: "destructive",
-                title: "Invalid checkout session",
-                description: "Checkout session not found",
-            });
-            window.location.href = "/cart";
-        }
+        useEffect(() => {
+            if (
+                queryResult.error &&
+                queryResult.error.response?.status === 404
+            ) {
+                toast({
+                    variant: "destructive",
+                    title: "Invalid checkout session",
+                    description: "Checkout session not found",
+                });
+                window.location.href = "/cart";
+            }
+        }, [queryResult.error, toast]);
 
         // Handle null data side effects
-        if (queryResult.isSuccess && queryResult.data === null) {
-            toast({
-                variant: "destructive",
-                title: "Invalid checkout session",
-                description: "Checkout session not found",
-            });
-            window.location.href = "/cart";
-        }
+        useEffect(() => {
+            if (queryResult.isSuccess && queryResult.data === null) {
+                toast({
+                    variant: "destructive",
+                    title: "Invalid checkout session",
+                    description: "Checkout session not found",
+                });
+                window.location.href = "/cart";
+            }
+        }, [queryResult.isSuccess, queryResult.data, toast]);
 
         return queryResult;
     };
@@ -104,10 +112,48 @@ export const useHandleCheckout = () => {
         },
     });
 
+    const useUnpaidCheckout = () => {
+        const queryResult = useQuery<
+            CheckoutSession[] | null,
+            AxiosError<{ message?: string }>
+        >({
+            queryKey: ["unpaid-checkout"],
+            queryFn: async () => {
+                const response = await api.get("/checkout/unpaid");
+                return response.data.data;
+            },
+            staleTime: 1000 * 60 * 3,
+        });
+
+        useEffect(() => {
+            if (queryResult.isError) {
+                toast({
+                    variant: "destructive",
+                    title: "Failed to load unpaid checkouts",
+                    description:
+                        queryResult.error.response?.data?.message ||
+                        "Unknown error occurred",
+                });
+            }
+        }, [queryResult.isError, queryResult.error]);
+
+        useEffect(() => {
+            if (queryResult.isSuccess && queryResult.data == null) {
+                toast({
+                    title: "No unpaid checkouts",
+                    description: "You have no unpaid checkout sessions",
+                });
+            }
+        }, [queryResult.isSuccess, queryResult.data, toast]);
+
+        return queryResult;
+    };
+
     return {
         startCheckout,
         useCheckoutSession, // Renamed to follow hook conventions
         completeCheckout,
+        useUnpaidCheckout,
     };
 };
 

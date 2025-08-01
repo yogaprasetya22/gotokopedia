@@ -30,7 +30,7 @@ const TAB = [
         label: "Pembelian",
         item_id: "item-2",
         links: [
-            { nama_path: "Menunggu Pembayaran", url: "/menunggu-pembayaran" },
+            { nama_path: "Menunggu Pembayaran", url: "/in-progress" },
             { nama_path: "Daftar Transaksi", url: "/order-list" },
         ],
     },
@@ -86,7 +86,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                                                     <AccordionTrigger className="py-2 hover:no-underline font-semibold text-sm">
                                                         {section.label}
                                                     </AccordionTrigger>
-                                                    <AccordionContent className="pl-6 py-1 flex flex-col gap-1">
+                                                    <AccordionContent className="pl-6 py-2 flex flex-col gap-2">
                                                         {section.links.map(
                                                             (link, index) => (
                                                                 <Link

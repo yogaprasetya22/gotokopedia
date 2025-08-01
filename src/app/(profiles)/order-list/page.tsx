@@ -10,14 +10,7 @@ import Image from "next/image";
 import { useHandleOrder } from "@/hooks/use-handle-order";
 
 export default function OrderList() {
-    const { useListOrders } = useHandleOrder();
-    const orderQuery = useListOrders();
-
-    if (!orderQuery) {
-        return <p>Gagal memuat daftar pesanan.</p>;
-    }
-
-    const { data: orders, isLoading, isError } = orderQuery;
+    const { data, isLoading, isError } = useHandleOrder().useListOrders();
 
     if (isLoading) {
         return (
@@ -32,16 +25,38 @@ export default function OrderList() {
         );
     }
 
-    if (isError || !orders) {
-        return <p>Gagal memuat daftar pesanan.</p>;
+    if (!data) {
+        return (
+            <div className="w-full flex flex-col items-center justify-center py-10">
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 mb-4">
+                    <span className="text-3xl text-gray-400">!</span>
+                </div>
+                <p className="text-center text-sm text-muted-foreground">
+                    Belum ada pesanan yang dibuat.
+                </p>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="w-full flex flex-col items-center justify-center py-10">
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-red-100 mb-4">
+                    <span className="text-3xl text-red-500">!</span>
+                </div>
+                <p className="text-center text-sm text-red-500">
+                    Terjadi kesalahan saat memuat daftar pesanan.
+                </p>
+            </div>
+        );
     }
 
     return (
         <div className="w-full flex flex-col gap-4">
             <h2 className="text-lg font-extrabold">Order List</h2>
             <div className="w-full flex flex-col gap-4 bg-white rounded-lg shadow-md border">
-                {orders &&
-                    orders.map((order: Order) => (
+                {data &&
+                    data.map((order: Order) => (
                         <div key={order.id} className="p-2">
                             <div className="bg-white border rounded-lg shadow-sm p-4 flex flex-col gap-4">
                                 <div className="flex justify-between items-start">

@@ -114,23 +114,32 @@ export const useCartMutations = () => {
         },
         ...baseOptions,
         onSuccess: () => {
-            toast({
-                title: "Success",
-                description: "Item berhasil ditambahkan ke keranjang",
-            });
+            setTimeout(() => {
+                toast({
+                    title: "Success",
+                    description: "Item berhasil ditambahkan ke keranjang",
+                });
+            }, 0);
         },
     });
 
-    const deleteItem = useMutation<void, AxiosError<{ message?: string }>, string, MutationContext>({
+    const deleteItem = useMutation<
+        void,
+        AxiosError<{ message?: string }>,
+        string,
+        MutationContext
+    >({
         mutationFn: async (cartStoreItemID: string) => {
             await api.delete(`/cart/item/${cartStoreItemID}/delete`);
         },
         ...baseOptions,
         onSuccess: () => {
-            toast({
-                title: "Success",
-                description: "Item berhasil dihapus dari keranjang",
-            });
+            setTimeout(() => {
+                toast({
+                    title: "Success",
+                    description: "Item berhasil ditambahkan ke keranjang",
+                });
+            }, 0);
         },
     });
 
